@@ -139,19 +139,12 @@ chmod 750 "/etc/openproject/"
 chmod -R o-rwx "/etc/openproject/"
 chown -R $app:$app "/etc/openproject/"
 
-#ynh_replace_string --match_string=".*PORT=.*" --replace_string="export PORT=$port" --target_file="/etc/default/openproject"
-#echo $app $app/port select $port | debconf-set-selections
-#openproject config:set PORT $port
-
 openproject config:set PORT=$port
 openproject config:set SERVER_PROTOCOL_FORCE_HTTPS="true"
 openproject config:set SERVER_HOSTNAME=$domain
 openproject config:set SERVER_PATH_PREFIX=$path_url
 
 openproject configure >> "$YNH_STDINFO"
-
-#ynh_replace_string --match_string="default: localhost:3000" --replace_string="default: $domain" --target_file="/opt/openproject/config/settings.yml"
-#ynh_replace_string --match_string="default: http" --replace_string="default: https" --target_file="/opt/openproject/config/settings.yml"
 
 #=================================================
 # GENERIC FINALIZATION
