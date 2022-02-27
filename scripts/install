@@ -3,105 +3,115 @@
 #=================================================
 # GENERIC START
 #=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
 source _common.sh
 source /usr/share/yunohost/helpers
 
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+ynh_clean_setup () {
+	ynh_clean_check_starting
+}
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
 #=================================================
-# Dealing with script's variables
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
-# Note: variables are stored in a single location to avoid confusion
-# and declaration sequencing issues.
-# Arguments from Manifest
+
 domain=$YNH_APP_ARG_DOMAIN
-path_url=$YNH_APP_ARG_PATH
+path_url="/"
 is_public=$YNH_APP_ARG_IS_PUBLIC
 language=$YNH_APP_ARG_LANGUAGE
+
 app=$YNH_APP_INSTANCE_NAME
 
 # Installer variables
-db_name=$(ynh_sanitize_dbid --db_name="$app")
-db_pwd=$(ynh_string_random)	# Generate a random password
-db_user=$db_name
-final_path="/var/www/$app"
 _homedir="/var/$app/"
-_openproject_install_dat="/etc/openproject/installer.dat"
-
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-ynh_script_progression --message="Validating installation parameters..." --weight=1
-
-test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
-
-# Find a free port.
-# This will only be used:
-# - By OpenProject to fire app server listening to this port, and
-# - Nginx to proxify on this.
-port=$(ynh_find_port --port=6000)
+ynh_script_progression --message="Validating installation parameters..."
 
 # Register (book) web path
-ynh_webpath_register --app="$app" --domain="$domain" --path_url="$path_url"
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_script_progression --message="Storing installation settings..." --weight=1
+ynh_script_progression --message="Storing installation settings..."
 
-ynh_app_setting_set --app="$app" --key=db_name --value="$db_name"
-ynh_app_setting_set --app="$app" --key=db_pwd --value="$db_pwd"
-ynh_app_setting_set --app="$app" --key=domain --value="$domain"
-ynh_app_setting_set --app="$app" --key=final_path --value="$final_path"
-ynh_app_setting_set --app="$app" --key=homedir --value="$_homedir"
-ynh_app_setting_set --app="$app" --key=is_public --value="$is_public"
-ynh_app_setting_set --app="$app" --key=language --value="$language"
-ynh_app_setting_set --app="$app" --key=path --value="$path_url"
-ynh_app_setting_set --app="$app" --key=port --value="$port"
-
-# Make app public if necessary
-[ "$is_public" -eq 1 ] &&	ynh_app_setting_set --app="$app" --key=unprotected_uris --value="/"
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=language --value=$language
+ynh_app_setting_set --app=$app --key=_homedir --value=$_homedir
 
 #=================================================
-# ENVIRONMENT SETUP
+# STANDARD MODIFICATIONS
 #=================================================
-# Note: it follows: https://www.openproject.org/download-and-installation/
+# FIND AND OPEN A PORT
+#=================================================
+ynh_script_progression --message="Finding an available port..."
 
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..." --weight=1
-ynh_system_user_create --username="$app" --home_dir="$_homedir" -s
+# Find an available port
+port=$(ynh_find_port --port=8095)
+ynh_app_setting_set --app=$app --key=port --value=$port
 
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing OpenProject & its dependencies..." --weight=1
+ynh_script_progression --message="Installing OpenProject & its dependencies..."
 
-# Add Openproject Key & repo
-# Var APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE to disable the STDOUT redirection warning
-wget -qO- https://dl.packager.io/srv/opf/openproject/key | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - >/dev/null
-wget -qO /etc/apt/sources.list.d/openproject.list https://dl.packager.io/srv/opf/openproject/stable/10/installer/debian/9.repo
+debian_release=$(lsb_release -r -s)
+ynh_install_app_dependencies $pkg_dependencies
+ynh_install_extra_app_dependencies --repo="deb https://dl.packager.io/srv/deb/opf/openproject/stable/$PROJECT_VERSION/debian $debian_release main" --package="$extra_pkg_dependencies" --key="https://dl.packager.io/srv/opf/openproject/key"
 
-ynh_install_app_dependencies "$pkg_dependencies" >> "$YNH_STDINFO"
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..."
+
+# Create a system user
+ynh_system_user_create --username=$app
+
+#=================================================
+# CREATE A POSTGRESQL DATABASE
+#=================================================
+ynh_script_progression --message="Creating a PostgreSQL database..."
+
+ynh_psql_test_if_first_run
+
+db_name=$(ynh_sanitize_dbid --db_name=$app)
+db_user=$db_name
+ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..." --weight=1
+ynh_script_progression --message="Configuring NGINX web server..."
 
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
+# SPECIFIC SETUP
+#=================================================
 # OPENPROJECT CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring OpenProject..." --weight=1
+ynh_script_progression --message="Configuring OpenProject..."
+
+mkdir -p "/etc/openproject/"
+_openproject_install_dat="/etc/openproject/installer.dat"
 
 #TODO Not sure about this email sending. To be tested.
-cat >> "$_openproject_install_dat" << EOF
+cat >> "$_openproject_install_dat"<< EOF
 postgres/autoinstall reuse
 postgres/db_host 127.0.0.1
 postgres/db_port 5432
@@ -109,6 +119,8 @@ postgres/db_username $db_user
 postgres/db_password $db_pwd
 postgres/db_name $db_name
 server/autoinstall skip
+server/hostname $domain
+server/protocol HTTPS
 smtp/autoinstall smtp
 smtp/authentication none
 smtp/host 127.0.0.1
@@ -123,86 +135,65 @@ EOF
 
 ynh_store_file_checksum --file="$_openproject_install_dat"
 
+chmod 750 "/etc/openproject/"
+chmod -R o-rwx "/etc/openproject/"
+chown -R $app:$app "/etc/openproject/"
 
-ynh_replace_string --match_string=".*PORT=.*" --replace_string="export PORT=$port" --target_file="/etc/default/openproject"
+#ynh_replace_string --match_string=".*PORT=.*" --replace_string="export PORT=$port" --target_file="/etc/default/openproject"
+#echo $app $app/port select $port | debconf-set-selections
+#openproject config:set PORT $port
 
-#=================================================
-# CREATE A POSTGRESQL DATABASE
-#=================================================
-ynh_script_progression --message="Creating a PostgreSQL database..." --weight=1
-
-ynh_psql_create_user "$db_user" "$db_pwd"
-ynh_psql_create_db "$db_name" "$db_user" "$db_pwd"
-
-#=================================================
-# OPENPROJECT POST-INSTALL
-#=================================================
-# Note: This section is undocumented on the installer.
-
-ynh_script_progression --message="Post-install of OpenProject" --weight=1
+openproject config:set PORT=$port
+openproject config:set SERVER_PROTOCOL_FORCE_HTTPS="true"
+openproject config:set SERVER_HOSTNAME=$domain
+openproject config:set SERVER_PATH_PREFIX=$path_url
 
 openproject configure >> "$YNH_STDINFO"
 
-####=================================================
-#### SETUP APPLICATION WITH CURL
-####=================================================
-###
-#### Set the app as temporarily public for curl call
-###ynh_script_progression --message="Configuring SSOwat..." --weight=1
-###ynh_app_setting_set --app="$app" --key=skipped_uris --value="/"
-#### Reload SSOwat config
-###yunohost app ssowatconf
-###
-#### Reload Nginx
-###ynh_systemd_action --service_name=nginx --action=reload
-###
-##### TODO REMOVE ? # Installation with curl
-##### TODO REMOVE ? ynh_script_progression --message="Finalizing installation..." --weight=1
-##### TODO REMOVE ? ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
-###
-#### Remove the public access
-###if [ $is_public -eq 0 ]
-###then
-###	ynh_app_setting_delete --app="$app" --key=skipped_uris
-###fi
+#ynh_replace_string --match_string="default: localhost:3000" --replace_string="default: $domain" --target_file="/opt/openproject/config/settings.yml"
+#ynh_replace_string --match_string="default: http" --replace_string="default: https" --target_file="/opt/openproject/config/settings.yml"
 
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
-# SETUP LOGROTATE
-ynh_script_progression --message="Configuring log rotation..." --weight=1
-ynh_use_logrotate
+# INTEGRATE SERVICE IN YUNOHOST
+#=================================================
+ynh_script_progression --message="Integrating service in YunoHost..."
 
-# ADVERTISE SERVICE IN ADMIN PANEL
-yunohost service add "$app" --log "/var/log/$app/$app.log"
+yunohost service add $app
 
+#=================================================
 # START SYSTEMD SERVICE
-ynh_script_progression --message="Starting a systemd service..." --weight=1
-# Compat YNH<3.5
-#ynh_systemd_action --service_name="$app" --action="start" --log_path="/var/log/$app/$app.log"
-systemctl restart openproject.service
+#=================================================
+ynh_script_progression --message="Starting a systemd service..."
 
-## SETUP FAIL2BAN
-#ynh_script_progression --message="Configuring fail2ban..." --weight=1
-#
-## Create a dedicated fail2ban config
-#ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
+# Start a systemd service
+ynh_systemd_action --service_name=$app --action="start" --log_path="systemd"
 
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..." --weight=1
+ynh_script_progression --message="Configuring permissions..."
 
+# Make app public if necessary
+if [ $is_public -eq 1 ]
+then
+	# Everyone can access the app.
+	# The "main" permission is automatically created before the install script.
+	ynh_permission_update --permission="main" --add="visitors"
+fi
+
+ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --auth_header="false" --show_tile="false" --protected="true"
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --weight=1
+ynh_script_progression --message="Reloading NGINX web server..."
 
-systemctl reload nginx.service
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --last
+ynh_script_progression --message="Installation of $app completed"
