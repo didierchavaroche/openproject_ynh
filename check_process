@@ -1,7 +1,7 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"
-		language="fr"
+		language="en"
 		is_public=1
 	; Checks
 		pkg_linter=1
