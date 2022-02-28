@@ -37,9 +37,6 @@ db_user=$db_name
 #=================================================
 ynh_script_progression --message="Validating restoration parameters..."
 
-test ! -d $final_path \
-	|| ynh_die --message="There is already a directory: $final_path "
-
 #=================================================
 # STANDARD RESTORATION STEPS
 #=================================================
