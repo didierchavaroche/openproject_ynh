@@ -96,16 +96,6 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_install_extra_app_dependencies --repo="deb https://dl.packager.io/srv/deb/opf/openproject/stable/$PROJECT_VERSION/debian $debian_release main" --package="$extra_pkg_dependencies" --key="https://dl.packager.io/srv/opf/openproject/key"
 
 #=================================================
-# SPECIFIC UPGRADE
-#=================================================
-# SETUP SYSTEMD
-#=================================================
-ynh_script_progression --message="Upgrading systemd configuration..."
-
-# Create a dedicated systemd config
-ynh_add_systemd_config
-
-#=================================================
 # GENERIC FINALIZATION
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
