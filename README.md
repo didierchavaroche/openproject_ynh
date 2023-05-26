@@ -16,8 +16,9 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-## Overview
-OpenProject is a web-based project management software. Its key features are:
+OpenProject is a web-based project management software.
+
+### Features
 
 - Project planning and scheduling
 - Product roadmap and release planning
@@ -36,9 +37,6 @@ OpenProject is a web-based project management software. Its key features are:
 
 ![Screenshot of OpenProject](./doc/screenshots/screenshot1.png)
 
-## Disclaimers / important information
-
-* default user and password is admin / admin
 ## Documentation and resources
 
 * Official app website: <https://www.openproject.org/>
