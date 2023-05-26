@@ -31,7 +31,8 @@ ram.runtime = "50M"
     full_domain = true
 
     [install.init_main_permission]
-    help.en = "A public Openproject app could be less secure depending your configuration. Butit can allow external people from your Yunohost instance to participate to project management."
+    help.en = "Set to visitors, Openproject could be less secure depending on your configuration, but it can allow visitors to participate to project management."
+    help.fr = "Réglée sur visiteurs, Openproject peut être moins sécurisée en fonction de votre configuration, mais elle peut permettre aux visiteurs de participer à la gestion du projet."
     type = "group"
     default = "visitors"
 
