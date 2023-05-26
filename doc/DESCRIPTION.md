@@ -1,5 +1,6 @@
-## Overview
-OpenProject is a web-based project management software. Its key features are:
+OpenProject is a web-based project management software.
+
+### Features
 
 - Project planning and scheduling
 - Product roadmap and release planning
