@@ -2,7 +2,8 @@ packaging_format = 2
 
 id = "openproject"
 name = "OpenProject"
-description.en = "web-based project management software"
+description.en = "Web-based project management software"
+description.fr = "Logiciel de gestion de projet basé sur le web"
 
 version = "10.5.1~ynh1"
 
