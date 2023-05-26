@@ -39,7 +39,7 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add $app
+--description="Web-based project management software" --log="systemd"
 
 #=================================================
 # START SYSTEMD SERVICE
