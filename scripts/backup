@@ -27,7 +27,7 @@ ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 # BACKUP VARIOUS FILES
 #=================================================
 
-ynh_backup --src_path="/etc/$app/"
+ynh_backup --src_path="/etc/openproject/"
 
 #=================================================
 # BACKUP THE POSTGRESQL DATABASE

@@ -48,7 +48,7 @@ ynh_script_progression --message="Removing various files..."
 ynh_secure_remove --file="$_homedir"
 
 # Remove a directory securely
-ynh_secure_remove --file="/etc/$app"
+ynh_secure_remove --file="/etc/openproject"
 
 #=================================================
 # END OF SCRIPT
