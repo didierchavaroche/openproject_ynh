@@ -3,9 +3,9 @@ packaging_format = 2
 id = "openproject"
 name = "OpenProject"
 description.en = "Web-based project management software"
-description.fr = "Logiciel de gestion de projet basé sur le web"
+description.fr = "Logiciel en ligne de gestion de projet"
 
-version = "10.5.1~ynh2"
+version = "12.5.8~ynh1"
 
 maintainers = ["Moutonjr \"Geoff\""]
 
@@ -23,7 +23,7 @@ ldap = false
 sso = false
 disk = "50M"
 ram.build = "800M"
-ram.runtime = "50M"
+ram.runtime = "1500M"
 
 [install]
     [install.domain]
