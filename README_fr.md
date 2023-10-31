@@ -42,7 +42,7 @@ OpenProject is a web-based project management software.
 * Site officiel de l’app : <https://www.openproject.org/>
 * Documentation officielle de l’admin : <https://www.openproject.org/docs/>
 * Dépôt de code officiel de l’app : <https://github.com/opf/openproject>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_openproject>
+* YunoHost Store: <https://apps.yunohost.org/app/openproject>
 * Signaler un bug : <https://github.com/YunoHost-Apps/openproject_ynh/issues>
 
 ## Informations pour les développeurs
