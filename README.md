@@ -23,7 +23,6 @@ OpenProject is a web-based project management software.
 - Project planning and scheduling
 - Product roadmap and release planning
 - Task management and team collaboration
-- Agile and Scrum
 - Time tracking, cost reporting and budgeting
 - Bug tracking
 - Wikis
@@ -31,7 +30,7 @@ OpenProject is a web-based project management software.
 - Meeting agendas and meeting minutes
 
 
-**Shipped version:** 10.5.1~ynh2
+**Shipped version:** 12.5.8~ynh1
 
 ## Screenshots
 

@@ -31,7 +31,7 @@ OpenProject is a web-based project management software.
 - Meeting agendas and meeting minutes
 
 
-**Version incluse :** 10.5.1~ynh2
+**Version incluse :** 12.5.8~ynh1
 
 ## Captures d’écran
 

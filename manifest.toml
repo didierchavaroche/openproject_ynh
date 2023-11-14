@@ -3,9 +3,9 @@ packaging_format = 2
 id = "openproject"
 name = "OpenProject"
 description.en = "Web-based project management software"
-description.fr = "Logiciel de gestion de projet basé sur le web"
+description.fr = "Logiciel en ligne de gestion de projet"
 
-version = "10.5.1~ynh2"
+version = "12.5.8~ynh1"
 
 maintainers = ["Moutonjr \"Geoff\""]
 
@@ -16,19 +16,18 @@ admindoc = "https://www.openproject.org/docs/"
 code = "https://github.com/opf/openproject"
 
 [integration]
-yunohost = ">= 11.1.19"
+yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = false
 ldap = false
 sso = false
 disk = "50M"
 ram.build = "800M"
-ram.runtime = "50M"
+ram.runtime = "1500M"
 
 [install]
     [install.domain]
     type = "domain"
-    full_domain = true
 
     [install.init_main_permission]
     help.en = "Set to visitors, Openproject could be less secure depending on your configuration, but it can allow visitors to participate to project management."
@@ -39,7 +38,7 @@ ram.runtime = "50M"
     [install.language]
     ask.en = "Choose the application language"
     ask.fr = "Choisissez la langue de l'application"
-    type = "string"
+    type = "select"
     choices = ["fr", "en"]
     default = "en"
 
