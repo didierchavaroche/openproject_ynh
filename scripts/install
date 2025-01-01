@@ -1,8 +1,6 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC START
-#=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
 
@@ -53,6 +51,7 @@ smtp/port 25
 smtp/domain $domain
 smtp/admin_email admin@$domain
 memcached/autoinstall install
+openproject/default_language $language
 
 server/hostname $domain
 server/ssl no
@@ -87,6 +86,10 @@ ynh_script_progression --message="Starting a systemd service..."
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="systemd"
+
+if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
+	sleep 60
+fi
 
 #=================================================
 # END OF SCRIPT
