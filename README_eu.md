@@ -5,7 +5,9 @@ EZ editatu eskuz.
 
 # OpenProject YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/openproject.svg)](https://dash.yunohost.org/appci/app/openproject) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/openproject.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/openproject.maintain.svg)
+[![Integrazio maila](https://apps.yunohost.org/badge/integration/openproject)](https://ci-apps.yunohost.org/ci/apps/openproject/)
+![Funtzionamendu egoera](https://apps.yunohost.org/badge/state/openproject)
+![Mantentze egoera](https://apps.yunohost.org/badge/maintained/openproject)
 
 [![Instalatu OpenProject YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=openproject)
 
@@ -30,7 +32,7 @@ OpenProject is a web-based project management software.
 - Meeting agendas and meeting minutes
 
 
-**Paketatutako bertsioa:** 12.5.8~ynh1
+**Paketatutako bertsioa:** 15.1.0~ynh1
 
 ## Pantaila-argazkiak
 
