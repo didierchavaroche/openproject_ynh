@@ -34,6 +34,7 @@ ram.runtime = "1500M"
     type = "domain"
 
     [install.path]
+    type = "path"
     default = "/openproject"
 
     [install.init_main_permission]
