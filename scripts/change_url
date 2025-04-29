@@ -31,7 +31,7 @@ ynh_change_url_nginx_config
 
 openproject config:set OPENPROJECT_HOST__NAME=$new_domain
 openproject config:set RAILS_RELATIVE_URL_ROOT=$path
-opneproject config:set OPENPROJECT_RAILS_RELATIVE_URL_ROOT=$path
+openproject config:set OPENPROJECT_RAILS_RELATIVE_URL_ROOT=$path
 
 openproject configure
 
