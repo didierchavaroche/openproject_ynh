@@ -65,7 +65,7 @@ ram.runtime = "7500M"
     main.url = "/"
     api.url = "/api"
     api.allowed = "visitors"
-    api.auth_header = false
+    api.auth_header = true
     api.show_tile = false
     api.protected = true
 
