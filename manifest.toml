@@ -17,7 +17,7 @@ code = "https://github.com/opf/openproject"
 cpe = "cpe:2.3:a:openproject:openproject"
 
 [integration]
-yunohost = ">= 11.2.30"
+yunohost = ">= 12.0.14"
 architectures = "all"
 multi_instance = false
 
@@ -33,6 +33,9 @@ ram.runtime = "1500M"
     [install.domain]
     type = "domain"
 
+    [install.path]
+    default = "/openproject"
+
     [install.init_main_permission]
     help.en = "Set to visitors, Openproject could be less secure depending on your configuration, but it can allow visitors to participate to project management."
     help.fr = "Réglée sur visiteurs, Openproject peut être moins sécurisée en fonction de votre configuration, mais elle peut permettre aux visiteurs de participer à la gestion du projet."
@@ -44,7 +47,7 @@ ram.runtime = "1500M"
     ask.fr = "Choisissez la langue de l'application"
     type = "select"
     choices = ["fr", "en"]
-    default = "en"
+    default = "fr"
 
 [resources]
 
